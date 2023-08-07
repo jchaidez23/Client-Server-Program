@@ -1,0 +1,68 @@
+<html>
+    <body>
+        <h1>Assignment 3</h1>
+        <button onclick="getTweets()">Get all Tweets!</button>
+        <button onclick="getUsers()">Get all users!</button>
+        <button onclick="button">Get a list of all external links</button>
+        
+        <form action="/url" method = "GET">
+            <label for="Tweet ID">Tweet ID:</label>
+            <input type ="number" id = "id" placeholder=311468922962587651>
+        </form>
+        <button onclick="button">Get details of tweet</button>
+        <form action="/url" method = "GET">
+            <label for="Username">Username:</label>
+            <input type ="text" username = "username" placeholder="Username">
+        </form>
+        <button onclick="button">Get profile information</button>
+        
+        <script>
+            //All the functions that the website will use to display the different information.
+            //Gets all the tweets inside the json file
+            function getTweets(){
+                console.log("helo");
+                fetch('./data.json').then(res => {
+                    return res.json();
+                })
+                .then(data => {
+                    document.getElementById("text").innerHTML = data;
+                })
+            }
+            //Gets users from json file
+            function getUsers(){
+                fetch('./data.json')
+                .then(res => {
+                    return res.json();
+                })
+                data.forEach(item => {
+                const screennameElement = document.getElementById("screenname");
+                
+                // Assuming data is an array of objects with a property called "screenname"
+                data.forEach(item => {
+                    const screennameItem = document.createElement("p");
+                    screennameItem.textContent = item.screenname;
+                    screennameElement.appendChild(screennameItem);
+            });
+        
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+    });
+            }
+            //Gets all the links from the json file
+            function getLinks(){
+
+            }
+            //Gets tweet details using a tweet ID
+            function tweetDetails(){
+
+            }
+            //Retrieves all the profile information using a username.
+            function profileInfo(){
+
+            }
+        </script>
+    </body>
+   
+</html>
