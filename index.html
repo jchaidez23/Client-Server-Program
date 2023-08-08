@@ -20,14 +20,16 @@
             //All the functions that the website will use to display the different information.
             //Gets all the tweets inside the json file
             function getTweets(){
-                console.log("helo");
-                fetch('./data.json').then(res => {
-                    return res.json();
-                })
+                fetch('/getTweets')
+                .then(res => res.json())
                 .then(data => {
-                    document.getElementById("text").innerHTML = data;
+                    console.log(data);
                 })
+                .catch(error => {
+                    console.error('Error', error);
+                });
             }
+
             //Gets users from json file
             function getUsers(){
                 fetch('./data.json')
