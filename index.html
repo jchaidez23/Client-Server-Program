@@ -5,7 +5,7 @@
         <button onclick="getUsers()">Get all users!</button>
         <button onclick="button">Get a list of all external links</button>
         
-        <form action="/url" method = "GET">
+        <form id="tweetDetails">
             <label for="Tweet ID">Tweet ID:</label>
             <input type ="number" id = "id" placeholder=311468922962587651>
         </form>
@@ -15,14 +15,25 @@
             <input type ="text" username = "username" placeholder="Username">
         </form>
         <button onclick="button">Get profile information</button>
-        
+        <h1 id="users">Users</h1>
+        <table>
+            <tr>
+                <th>Known Users</th>
+            </tr>
+        </table>
+        <h1 id ="tweets">Tweets</h1>
         <script>
             //All the functions that the website will use to display the different information.
+            function sendID(){
+                var ID = document.getElementById("id").value;
+                tweetDetails(ID);
+            }
             //Gets all the tweets inside the json file
             function getTweets(){
-                fetch('/getTweets')
+                fetch('http://localhost:3000/getTweets')
                 .then(res => res.json())
                 .then(data => {
+                    document.getElementById("tweets").innerHTML = data;
                     console.log(data);
                 })
                 .catch(error => {
@@ -32,33 +43,26 @@
 
             //Gets users from json file
             function getUsers(){
-                fetch('./data.json')
+                fetch('http://localhost:3000/getUsers')
                 .then(res => {
                     return res.json();
                 })
-                data.forEach(item => {
-                const screennameElement = document.getElementById("screenname");
-                
-                // Assuming data is an array of objects with a property called "screenname"
-                data.forEach(item => {
-                    const screennameItem = document.createElement("p");
-                    screennameItem.textContent = item.screenname;
-                    screennameElement.appendChild(screennameItem);
-            });
-        
-        console.log(data);
-    })
-    .catch(error => {
-        console.error('Error fetching data:', error);
-    });
+                .then(data => {
+                    document.getElementById("users").innerHTML = data;
+                        console.log(data);
+                        console.log(data.length);
+                    //showTable(length(data));
+                })
+            
             }
+    
             //Gets all the links from the json file
             function getLinks(){
 
             }
             //Gets tweet details using a tweet ID
-            function tweetDetails(){
-
+            function tweetDetails(id){
+                console.log(id);
             }
             //Retrieves all the profile information using a username.
             function profileInfo(){
