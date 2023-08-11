@@ -2,34 +2,78 @@
     <body>
         <h1>Assignment 3</h1>
         <button onclick="getTweets()">Get all Tweets!</button>
-        <button onclick="getUsers()">Get all users!</button>
-        <button onclick="button">Get a list of all external links</button>
+        <button onclick="getUsers()" id = "userButton">Get all users!</button>
+        <button onclick="getLinks()">Get a list of all external links</button>
         
-        <form id="tweetDetails">
+        <form id="tweetDetailsForm">
             <label for="Tweet ID">Tweet ID:</label>
-            <input type ="number" id = "id" placeholder=311468922962587651>
+            <input type ="number" id = "tweetid" placeholder=311468922962587651>
         </form>
-        <button onclick="button">Get details of tweet</button>
+        <button onclick="tweetDetails()" id = "tweetDetailsButton">Get details of tweet</button>
         <form action="/url" method = "GET">
             <label for="Username">Username:</label>
-            <input type ="text" username = "username" placeholder="Username">
+            <input type ="text" id = "username" placeholder="Username">
         </form>
-        <button onclick="button">Get profile information</button>
+        <button onclick="getProfile()">Get profile information</button>
         <h1 id="users">Click "Get all users!" to see users here</h1>
-        <h1 id ="tweets">View all tweets here</h1>
+        <h1 id="tweets">Tweets will appear here</h1>
+        <h1 id="external">External links will appear here</h1>
+        <h1 id="tweetDetails">Tweet Details will appear here once you enter a tweet ID</h1>
+        <h1 id="profileInfo">Profile Information will appear here once you enter a screenname</h1>
         <script>
             //All the functions that the website will use to display the different information.
-            function sendID(){
-                var ID = document.getElementById("id").value;
-                tweetDetails(ID);
-            }
+
             //Gets all the tweets inside the json file
             function getTweets(){
                 fetch('http://localhost:3000/getTweets')
-                .then(res => res.json())
+                .then(res => {
+                    return res.json()})
                 .then(data => {
-                    document.getElementById("tweets").innerHTML = data;
-                    console.log(data);
+                    const container = document.getElementById("tweets");
+                    container.innerHTML = "";
+                    const table = document.createElement("table");
+                    const thead = document.createElement("thead");
+                    const trHead = document.createElement("tr");
+                    //headers for the table
+                    const headers = ["Tweet Date", "Tweet ID", "Tweet Text"];
+                    //iterates over array of headers and adds them to the headers.
+                    headers.forEach(headerText => {
+                        const th = document.createElement("th");
+                        th.textContent = headerText;
+                        trHead.appendChild(th);
+                    })
+                    
+
+                    thead.appendChild(trHead);
+                    table.appendChild(thead);
+
+                    const tbody = document.createElement("tbody");
+                    const tweetDate = data.tweetDate;
+                    const tweetID = data.tweetID;
+                    const tweetTxt = data.tweetTxt;
+                    //iterates over the json file that is sent back containing three arrays
+                    for(let i = 0; i < tweetDate.length; i++){
+                        const tr = document.createElement("tr");
+                        //Gets the date the tweets were sent
+                        const tdDate = document.createElement("td");
+                        tdDate.textContent = tweetDate[i];
+                        tr.appendChild(tdDate);
+
+                        //Gets the ID of each tweet
+                        const tdtweetID = document.createElement("td");
+                        tdtweetID.textContent = tweetID[i];
+                        tr.appendChild(tdtweetID);
+
+                        //Gets the Text from each tweet
+                        const tdText = document.createElement("td");
+                        tdText.textContent = tweetTxt[i];
+                        tr.appendChild(tdText);
+
+                        tbody.appendChild(tr);
+                    }
+
+                    table.appendChild(tbody);
+                    container.appendChild(table);
                 })
                 .catch(error => {
                     console.error('Error', error);
@@ -80,12 +124,83 @@
 
             }
             //Gets tweet details using a tweet ID
-            function tweetDetails(id){
-                console.log(id);
+            function tweetDetails(){
+                const tweetIDfromBox = document.getElementById("tweetid")
+                const tweetID = tweetIDfromBox.value;
+
+                if(tweetID){
+                    fetch(`/tweetDetails/${tweetID}`)
+                    .then(res => {
+                        return res.json();
+                    })
+                    .then(data =>{
+                        console.log("Getting tweet details for tweet ID: ",tweetID);
+                        console.log(data);
+                        //creates a table that will show the users
+                        const container = document.getElementById("tweetDetails");
+                        //resets the table so that it wont append after the button is clicked
+                        //mpre than once.
+                        container.innerHTML = "";
+                        const table = document.createElement("table");
+                        const thead = document.createElement("thead");
+                        const trHead = document.createElement("tr");
+                        const th = document.createElement("th");
+                        //header for the table
+                        th.textContent = "Tweet Details";
+                        trHead.appendChild(th);
+                        thead.appendChild(trHead);
+                        table.appendChild(thead);
+
+                        const tbody = document.createElement("tbody");
+
+                    for (const key in data[0]){
+                        const tr = document.createElement("tr");
+                        const keyCell = document.createElement("td");
+                        const valueCell = document.createElement("td");
+
+                        keyCell.textContent = key;
+                        valueCell.textContent = data[0][key];
+
+                        tr.appendChild(keyCell);
+                        tr.appendChild(valueCell);
+                        tbody.appendChild(tr);
+                    }
+                    table.appendChild(tbody);
+                    container.appendChild(table);
+                        
+                    })
+                    .catch(err => {
+                        console.error("Error",err);
+                    });
+                    
+                }
+                else{
+                    console.log("No tweet ID was given");
+                }
             }
             //Retrieves all the profile information using a username.
-            function profileInfo(){
-
+            function getProfile(){
+                //gets the value of the text inside textbox for screenname
+                const profile = document.getElementById("username");
+                const screenName = profile.value;
+                //if there is a screenname proceeds
+                if(screenName){
+                    //calls the server.js getProfile function with the screenname appended
+                    fetch(`/getProfile/${screenName}`)
+                    .then(res =>{
+                        return res.json();
+                    })
+                    .then(data => {
+                        console.log("Getting profile info for profile: ",profile);
+                        console.log(data);
+                    })
+                    .catch(err => {
+                        console.error("Error", err);
+                    });
+                }
+                else{
+                    console.log("No profile was given");
+                }
             }
         </script>
     </body>
