@@ -15,13 +15,8 @@
             <input type ="text" username = "username" placeholder="Username">
         </form>
         <button onclick="button">Get profile information</button>
-        <h1 id="users">Users</h1>
-        <table>
-            <tr>
-                <th>Known Users</th>
-            </tr>
-        </table>
-        <h1 id ="tweets">Tweets</h1>
+        <h1 id="users">Click "Get all users!" to see users here</h1>
+        <h1 id ="tweets">View all tweets here</h1>
         <script>
             //All the functions that the website will use to display the different information.
             function sendID(){
@@ -48,10 +43,34 @@
                     return res.json();
                 })
                 .then(data => {
-                    document.getElementById("users").innerHTML = data;
-                        console.log(data);
-                        console.log(data.length);
-                    //showTable(length(data));
+                    //creates a table that will show the users
+                    const container = document.getElementById("users");
+                    //resets the table so that it wont append after the button is clicked
+                    //mpre than once.
+                    container.innerHTML = "";
+                    const table = document.createElement("table");
+                    const thead = document.createElement("thead");
+                    const trHead = document.createElement("tr");
+                    const th = document.createElement("th");
+                    //header for the table
+                    th.textContent = "Users";
+                    trHead.appendChild(th);
+                    thead.appendChild(trHead);
+                    table.appendChild(thead);
+
+                    const tbody = document.createElement("tbody");
+
+                    data.forEach(item => {
+                        console.log(item);
+                        const tr = document.createElement("tr");
+                        const td = document.createElement("td");
+                        td.textContent = item;
+                        tr.appendChild(td);
+                        tbody.appendChild(tr);
+                    });
+
+                    table.appendChild(tbody);
+                    container.appendChild(table);
                 })
             
             }
