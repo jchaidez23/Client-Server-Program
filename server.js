@@ -34,7 +34,6 @@ app.get('/getTweets', async(req,res, next) => {
         //id: id
         //tweet text: text
         //Retrieves the necessary information from the json file.
-        
         const tweetDate = data.map(item => item.created_at);
         const tweetID = data.map(item => item.id_str);
         const tweetTxt = data.map(item => item.text);
@@ -84,10 +83,13 @@ app.get('/tweetDetails', async(req,res, next) => {
     const user = []
 
     if(data != null){
-        if(id == data.id):
-            user.push(data)
+
+        if(id == data.id){
+            user.push(data);
+        }
+            
     }
-})
+});
 
 module.exports = app;
 
@@ -98,5 +100,4 @@ const port = 3000;
 const server = app.listen(3000, () => {
     console.log(`Server is connected at port: ${port}`);
 })
-
 
