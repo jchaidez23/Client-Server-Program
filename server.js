@@ -76,21 +76,70 @@ app.get('/getUsers', async(req,res, next) => {
 
 });
 
-
-app.get('/tweetDetails', async(req,res, next) => {
-    const id = req.query.id;
+//Retrieves the details of a tweet given the id of said tweet
+app.get('/tweetDetails/:tweetId', async(req,res, next) => {
+    const id = req.params.tweetId;
     const data = await ReadArchive(archive_url);
-    const user = []
+    const tweet = [];
 
     if(data != null){
-
-        if(id == data.id){
-            user.push(data);
-        }
+        
+        data.forEach(element => {
+            if(element.id_str == id){
+                tweet.push({
+                    created_at: element.created_at,
+                    id_str: element.id_str,
+                    text: element.text,
+                    source: element.source,
+                    retweet_count: element.retweet_count,
+                    hashtags: element.entities.hashtags,
+                    user_mentions: element.entities.user_mentions.flat
+                });     
+            }
+        });
             
     }
+    if(tweet.length >0){
+        return res.status(200).json(tweet);
+    }
+    else{
+        return res.status(404).json({message:"Tweet with that id does not exist"});
+    }
+    
 });
 
+//Retrieves the detailed information of a given twitter user given the screen name
+app.get('/getProfile/:profile', async(req,res, next) =>{
+    const screenname = req.params.profile;
+    const data = await ReadArchive(archive_url);
+    const profile = [];
+
+    if(data != null){
+        data.forEach(element => {
+            if(element.user.screen_name == screenname){
+                profile.push({
+                    Profile_ID: element.user.id_str,
+                    Name: element.user.name,
+                    ScreenName: element.user.screen_name,
+                    Location: element.user.location,
+                    follower_count: element.user.followers_count,
+                    friends_count: element.user.friends_count,
+                    listed_count: element.user.listed_count,
+                    created: element.user.created_at,
+                    favorite_count: element.user.favorites_count
+
+
+                })
+            }
+        })
+    }
+    if(profile.length > 0){
+        return res.status(200).json(profile);
+    }
+    else{
+        return res.status(404).json({message:"Profile with that screen name was not found"});
+    }
+})
 module.exports = app;
 
 const http = require('http');
@@ -100,4 +149,3 @@ const port = 3000;
 const server = app.listen(3000, () => {
     console.log(`Server is connected at port: ${port}`);
 })
-
